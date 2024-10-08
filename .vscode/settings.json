@@ -1,10 +1,13 @@
 {
   "cSpell.words": [
+    "мониторимых",
+    "Мониторить",
     "filebeat",
     "fliebit",
     "fluentd",
     "promtail",
     "Pushgateway",
+    "TSDB",
     "Zabbix"
   ]
 }
