@@ -433,9 +433,31 @@
 ```
 
 ```txt
-4 - Что такое fliebit? Что такое fluent bit? Чем они отличаются?
+4 - Что такое fliebit (Filebeat)? Что такое fluent bit? Чем они отличаются? 
 
-->
+->  Filebeat и Fluent Bit - это два популярных агента сбора логов, которые помогают собирать, 
+    обрабатывать и передавать логи из различных источников в системы мониторинга, аналитики и 
+    хранения.
+
+    Filebeat - это агент сбора логов от Elastic, который специально разработан для работы с
+    экосистемой Elastic (Elasticsearch, Kibana, Logstash). Он собирает логи из файлов,
+    системных журналов и других источников и передает их в Elasticsearch, Logstash или другие
+    системы для дальнейшей обработки и анализа.
+
+    Fluent Bit - это легковесный и гибкий агент сбора логов, который может собирать логи из
+    различных источников, таких как файлы, системные журналы, Docker, Kubernetes и другие. Он
+    поддерживает множество выходных плагинов, которые позволяют передавать логи в различные
+    системы, включая Elasticsearch, Kafka, AWS CloudWatch, Google Cloud Logging и другие.
+
+    Основные отличия между Filebeat и Fluent Bit:
+    - Filebeat тесно интегрирован с экосистемой Elastic и предназначен для работы с
+    Elasticsearch и Logstash.
+    - Filebeat имеет более широкие возможности по обработке логов, включая фильтрацию, парсинг
+    и обогащение логов.
+    - Fluent Bit более универсален и может работать с различными системами, включая не только
+    Elastic, но и другие системы мониторинга и аналитики.
+    - Fluent Bit более легковесен и требует меньше ресурсов, что делает его более подходящим для
+    работы в средах с ограниченными ресурсами.
 ```
 
 ### Intern-2
@@ -443,20 +465,132 @@
 ```txt
 1 - Чем fluent bit отличается от fluentd?
 
-->
+->  Fluent Bit и Fluentd - это два популярных агента сбора логов, которые разработаны
+    компанией Treasure Data. Они оба предназначены для сбора, обработки и передачи логов из
+    различных источников в системы мониторинга, аналитики и хранения.
+
+    Основные отличия между Fluent Bit и Fluentd:
+    - Архитектура: Fluentd - это более старый и более сложный агент, который имеет модульную
+    архитектуру и поддерживает множество плагинов. Fluent Bit - это более легковесный и гибкий
+    агент, который имеет более простую архитектуру и поддерживает меньшее количество плагинов.
+    - Производительность: Fluent Bit более быстрый и эффективный, чем Fluentd, особенно при
+    работе с большими объемами логов.
+    - Потребление ресурсов: Fluent Bit требует меньше ресурсов, чем Fluentd, что делает его
+    более подходящим для работы в средах с ограниченными ресурсами.
+    - Конфигурация: Fluent Bit имеет более простую конфигурацию, чем Fluentd, что делает его
+    более легко настраиваемым.
+    - Поддержка протоколов: Fluent Bit поддерживает меньшее количество протоколов, чем
+    Fluentd, но все же поддерживает большинство популярных протоколов, таких как TCP, UDP,
+    HTTP и другие.
+    - Размер: Fluent Bit более компактный, чем Fluentd, что делает его более легко
+    развертываемым в контейнерах и других средах.
+
+    В целом, Fluent Bit - это более современный и более эффективный агент сбора логов, который
+    предназначен для работы в современных средах с ограниченными ресурсами. Fluentd - это более
+    старый и более сложный агент, который все еще может быть полезен в некоторых случаях, но
+    требует более сложной конфигурации и более ресурсоемкий.
+
+    <source>
+      @type tail
+      path /var/log/apache2/access.log
+      pos_file /var/log/apache2/access.log.pos
+      tag apache.access
+    </source>
+    <match apache.access>
+      @type elasticsearch
+      host localhost
+      port 9200
+      index_name apache_access
+    </match>
+
+    [INPUT]
+      Name        tail
+      Tag         apache_access
+      Path        /var/log/apache2/access.log  
+    [OUTPUT]
+      Name        elasticsearch
+      Match       apache_access
+      Host        localhost
+      Port        9200
+      Index       apache_access
 ```
 
 ```txt
 2 - Что такое Grafana Loki?
 
-->
+->  Grafana Loki - это система сбора и хранения логов, разработанная компанией Grafana Labs.
+    Loki предназначена для сбора, обработки и хранения логов из различных источников, таких как
+    приложения, сервисы и инфраструктура.
+
+    Loki была создана как альтернатива традиционным системам сбора логов, таким как ELK
+    (Elasticsearch, Logstash, Kibana) и Splunk. Основными целями Loki являются:
+    - Упрощение сбора логов: Loki позволяет легко собирать логи из различных источников,
+    используя простые и гибкие конфигурации.
+    - Уменьшение стоимости хранения: Loki использует компактное хранение логов, что позволяет
+    уменьшить стоимость хранения и увеличить скорость доступа к логам.
+    - Улучшение производительности: Loki оптимизирована для высоких нагрузок и может
+    обрабатывать большие объемы логов в режиме реального времени.
+
+    Loki состоит из следующих компонентов:
+    - Loki Server: центральный сервер, который собирает и хранит логи.
+    - Loki Agent: агент, который собирает логи с источников и отправляет их на сервер Loki.
+    - Grafana: веб-интерфейс, который позволяет просматривать и анализировать логи.
+
+    Loki поддерживает следующие функции:
+    - Сбор логов: Loki может собирать логи из различных источников, таких как файлы, системные
+    журналы, Docker, Kubernetes и другие.
+    - Обработка логов: Loki может обрабатывать логи, используя фильтры, парсеры и другие плагины.
+    - Хранение логов: Loki хранит логи в компактном формате, что позволяет уменьшить стоимость
+    хранения.
+    - Поиск и фильтрация: Loki позволяет быстро искать и фильтровать логи, используя различные
+    критерии.
+    - Визуализация: Loki интегрируется с Grafana, что позволяет просматривать и анализировать
+    логи в виде графиков и таблиц.
 ```
 
 ```txt
 3 - Как настроить автоматический сбор логов из всех Docker-контейнеров (уже запущенных и новых)
     на определенном хосте и отправку этих логов в Elasticsearch?
     
-->
+->  1 - Берем docker-compose.yml
+    version: '3'
+    services:
+        filebeat:
+            image: docker.elastic.co/beats/filebeat:7.10.2
+            volumes:
+                - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+                - /var/lib/docker/containers:/var/lib/docker/containers
+            depends_on:
+                - elasticsearch
+            restart: always
+
+        elasticsearch:
+            image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+            environment:
+                - xpack.security.enabled=false
+            restart: always
+    
+    2 - Создание файла filebeat.yml
+    filebeat.inputs:
+        - type: docker
+          containers:
+          path: "/var/lib/docker/containers"
+          scan_frequency: 10s
+          json: true
+
+    output.elasticsearch:
+        hosts: ["elasticsearch:9200"]
+        index: "docker-logs-%{[agent.version]}-%{+yyyy.MM.dd}"
+    Этот файл конфигурации Filebeat указывает на то, что Filebeat должен собирать логи из всех Docker-контейнеров, расположенных в /var/lib/docker/containers, и отправлять их в
+    Elasticsearch на порту 9200.
+
+    3 - docker-compose up -d
+
+    4 - docker-compose exec filebeat filebeat -e -c /usr/share/filebeat/filebeat.yml
+    Эта команда запустит Filebeat в режиме отладки и выведет логи в консоль.
+    5 - Вы можете проверить логи в Elasticsearch, используя команду:
+    curl -XGET 'http://localhost:9200/_search?pretty'
+    Эта команда выведет список всех логов, собранных Filebeat.
 ```
 
 ### Advanced-2
@@ -464,5 +598,41 @@
 ```txt
 1 - Как реализовать автоматический сбор логов и всех подов/контейнеров в Kubernetes?
 
-->
+->  Можно сразу установить helm-овый чарт
+    curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+    helm install efk stable/efk
+    Немного поиграться с values, но подход слишком простой, плюс нужно объяснить что откуда.
+
+    Второй вариант последовательно все устанавливать, как делал я. Пишем манифесты под эластик
+    и кибану. Можем реализовать через sts эластик, также сделаем pv чтобы был claim. Связываем
+    кибану и эластик через env, порт у кибаны 5601, у эластика 9200.
+
+    Переходя к Fluentd - это агент логов, который собирает логи из контейнеров и отправляет их
+    в Elasticsearch. Мы можем сделать configmap 
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+        name: fluentd-config
+    data:
+        fluent.conf: |
+          <source>
+            @type tail
+            path /var/log/containers/*.log
+            pos_file /var/log/fluentd-containers.log.pos
+            tag "kubernetes.*"
+            format json
+            time_key time
+          </source>
+
+          <match kubernetes.**>
+            @type elasticsearch
+            host elasticsearch
+            port 9200
+            index_name fluentd
+          </match>
+    Этот файл конфигурации Fluentd указывает на то, что Fluentd должен собирать логи из всех
+    контейнеров в /var/log/containers/ и отправлять их в Elasticsearch.
+
+    либо в env daemon set это прописать, как пример fluent_elasticsearch_host(port, format,
+    parser, time_format), также volumes, volumeMounts path: /var/log/containers/
 ```
